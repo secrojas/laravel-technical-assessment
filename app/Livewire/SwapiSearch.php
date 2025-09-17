@@ -18,11 +18,13 @@ class SwapiSearch extends Component
             return;
         }
 
+        $key = 'swapi-search-'.strtolower(trim($this->query));
+        
         $people = Cache::remember(
-            "swapi-search-{$this->query}",
+            $key,
             3600,
             function () {
-                $response = Http::get('https://swapi.dev/api/people', [
+                $response = Http::get(config('swapi.base_url').'/people', [
                     'search' => $this->query,
                 ]);
 
