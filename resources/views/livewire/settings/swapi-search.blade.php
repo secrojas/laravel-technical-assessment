@@ -4,7 +4,7 @@
             type="text" 
             wire:model.defer="query"
             wire:keydown.enter="search"
-            placeholder="Search Star Wars character..." 
+            placeholder="Search Star Wars character..."
             class="border p-2 w-full"
         >
         <button 
