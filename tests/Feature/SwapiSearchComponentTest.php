@@ -12,8 +12,10 @@ class SwapiSearchComponentTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_displays_results_from_swapi()
     {
+        $baseUrl = config('swapi.base_url');
+
         Http::fake([
-            'https://swapi.dev/api/people*' => Http::response([
+            "{$baseUrl}/people*" => Http::response([
                 'results' => [
                     [
                         'name' => 'Luke Skywalker',
@@ -21,11 +23,12 @@ class SwapiSearchComponentTest extends TestCase
                         'gender' => 'Male',
                         'height' => '172',
                         'mass' => '77',
-                        'films' => ['https://swapi.dev/api/films/1/'],
+                        'films' => ["{$baseUrl}/films/1/"],
                     ],
                 ],
             ], 200),
-            'https://swapi.dev/api/films/1/' => Http::response([
+
+            "{$baseUrl}/films/1/" => Http::response([
                 'title' => 'A New Hope',
                 'release_date' => '1977-05-25',
             ], 200),
@@ -42,10 +45,12 @@ class SwapiSearchComponentTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_shows_no_results_when_swapi_returns_empty()
     {
-        Http::fake([
-            'https://swapi.dev/api/people*' => Http::response(['results' => []], 200),
-        ]);
+        $baseUrl = config('swapi.base_url');
 
+        Http::fake([
+            "{$baseUrl}/people*" => Http::response(['results' => []], 200),
+        ]);
+        
         Livewire::test(SwapiSearch::class)
             ->set('query', 'Unknown Character')
             ->call('search')
