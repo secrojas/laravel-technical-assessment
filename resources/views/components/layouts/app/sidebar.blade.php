@@ -19,7 +19,11 @@
                     <flux:navlist.item icon="film" :href="route('actors')" :current="request()->routeIs('actors')" wire:navigate>
                         {{ __('Actors & Movies') }}
                     </flux:navlist.item>
-                    
+
+                    <flux:navlist.item icon="sparkles" :href="route('swapi')" :current="request()->routeIs('swapi')" wire:navigate>
+                        Star Wars Search
+                    </flux:navlist.item>
+
                 </flux:navlist.group>
             </flux:navlist>
 
