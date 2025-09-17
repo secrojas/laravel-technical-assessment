@@ -25,6 +25,6 @@ class Actors extends Component
             })
             ->paginate(9);
 
-        return view('livewire.actors', compact('actors'));
+        return view('livewire.settings.actors', compact('actors'));
     }
 }

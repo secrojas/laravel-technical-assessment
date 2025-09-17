@@ -25,6 +25,6 @@ class SwapiSearch extends Component
 
     public function render()
     {
-        return view('livewire.swapi-search');
+        return view('livewire.settings.swapi-search');
     }
 }
