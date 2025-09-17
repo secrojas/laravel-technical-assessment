@@ -13,8 +13,13 @@ class ActorSeeder extends Seeder
      */
     public function run(): void
     {
-         Actor::factory(5)->create()->each(function ($actor) {
-            Movie::factory(3)->create(['actor_id' => $actor->id]);
-        });
+         Actor::factory()
+            ->count(5)
+            ->create()
+            ->each(function ($actor) {
+                Movie::factory()->count(3)->create([
+                    'actor_id' => $actor->id,
+                ]);
+            });
     }
 }

@@ -10,7 +10,17 @@ class Actor extends Model
     /** @use HasFactory<\Database\Factories\ActorFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'birthdate'];
+    protected $fillable = [
+        'name',
+        'birthdate',
+        'gender',
+        'height',
+        'mass',
+        'hair_color',
+        'skin_color',
+        'eye_color',
+        'swapi_url',
+    ];
 
     public function movies()
     {

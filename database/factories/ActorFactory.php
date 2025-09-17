@@ -17,8 +17,15 @@ class ActorFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'birthdate' => $this->faker->date(),
+            'name'       => $this->faker->name(),
+            'birthdate'  => $this->faker->randomElement(['19BBY', '41.9BBY', '58ABY', 'unknown']),
+            'gender'     => $this->faker->randomElement(['male', 'female', 'n/a', 'unknown']),
+            'height'     => (string) $this->faker->numberBetween(150, 220),
+            'mass'       => (string) $this->faker->numberBetween(50, 120),
+            'hair_color' => $this->faker->safeColorName(),
+            'skin_color' => $this->faker->safeColorName(),
+            'eye_color'  => $this->faker->safeColorName(),
+            'swapi_url'  => $this->faker->unique()->url(),
         ];
     }
 }

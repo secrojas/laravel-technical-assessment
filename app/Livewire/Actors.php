@@ -3,11 +3,19 @@
 namespace App\Livewire;
 
 use App\Models\Actor;
+use Livewire\WithPagination;
 use Livewire\Component;
 
 class Actors extends Component
 {
+    use WithPagination;
+
     public $search = '';
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -15,7 +23,7 @@ class Actors extends Component
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', "%{$this->search}%");
             })
-            ->get();
+            ->paginate(9);
 
         return view('livewire.actors', compact('actors'));
     }
