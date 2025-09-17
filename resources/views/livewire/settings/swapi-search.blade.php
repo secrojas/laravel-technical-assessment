@@ -2,7 +2,8 @@
     <div class="flex space-x-2">
         <input 
             type="text" 
-            wire:model.defer="query" 
+            wire:model.defer="query"
+            wire:keydown.enter="search"
             placeholder="Search Star Wars character..." 
             class="border p-2 w-full"
         >
