@@ -18,9 +18,13 @@ class MovieFactory extends Factory
     public function definition(): array
     {
         return [
-            'actor_id' => Actor::factory(),
-            'title'    => $this->faker->sentence(3),
-            'year'     => $this->faker->year(),
+            'title'         => $this->faker->sentence(3),
+            'episode_id'    => $this->faker->numberBetween(1, 9),
+            'opening_crawl' => $this->faker->paragraph(),
+            'director'      => $this->faker->name(),
+            'producer'      => $this->faker->name(),
+            'release_date'  => $this->faker->date(),
+            'url'           => $this->faker->unique()->url(),
         ];
     }
 }

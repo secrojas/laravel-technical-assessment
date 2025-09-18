@@ -10,10 +10,18 @@ class Movie extends Model
     /** @use HasFactory<\Database\Factories\MovieFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'year', 'actor_id'];
+    protected $fillable = [
+        'title',
+        'episode_id',
+        'opening_crawl',
+        'director',
+        'producer',
+        'release_date',
+        'url',
+    ];
 
-    public function actor()
+    public function actors()
     {
-        return $this->belongsTo(Actor::class);
+        return $this->belongsToMany(Actor::class)->withTimestamps();
     }
 }

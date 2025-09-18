@@ -35,25 +35,38 @@
         @endif
 
         @forelse($results as $person)
-            <div class="p-4 border rounded space-y-2 bg-white dark:bg-zinc-800">
+            <div class="p-4 border rounded shadow bg-white dark:bg-zinc-800 space-y-2">
                 <h2 class="font-bold text-lg">{{ $person['name'] }}</h2>
-                <p><strong>Birth Year:</strong> {{ $person['birth_year'] }}</p>
-                <p><strong>Gender:</strong> {{ $person['gender'] }}</p>
-                <p><strong>Height:</strong> {{ $person['height'] }} cm</p>
-                <p><strong>Mass:</strong> {{ $person['mass'] }} kg</p>
+                <p><strong>Birth Year:</strong> {{ $person['birth_year'] ?? 'Unknown' }}</p>
+                <p><strong>Gender:</strong> {{ $person['gender'] ?? 'Unknown' }}</p>
+                <p><strong>Height:</strong> {{ $person['height'] ?? 'Unknown' }} cm</p>
+                <p><strong>Mass:</strong> {{ $person['mass'] ?? 'Unknown' }} kg</p>
 
                 @if(!empty($person['films_details']))
                     <p><strong>Films:</strong></p>
-                    <ul class="list-disc ml-5">
+                    <ul class="list-disc ml-5 space-y-1">
                         @foreach($person['films_details'] as $film)
-                            <li>{{ $film['title'] }} ({{ \Carbon\Carbon::parse($film['release_date'])->format('Y') }})</li>
+                            <li>
+                                <span class="font-semibold">{{ $film['title'] }}</span>
+                                @if(!empty($film['episode_id']))
+                                    – Episode {{ $film['episode_id'] }}
+                                @endif
+                                @if(!empty($film['release_date']))
+                                    ({{ \Carbon\Carbon::parse($film['release_date'])->format('Y') }})
+                                @endif
+                                <br>
+                                <span class="text-sm text-gray-600">
+                                    Directed by {{ $film['director'] ?? '-' }},
+                                    Produced by {{ $film['producer'] ?? '-' }}
+                                </span>
+                            </li>
                         @endforeach
                     </ul>
                 @endif
             </div>
         @empty
             @if($query)
-                <p>No results found.</p>
+                <p class="text-red-500">No results found.</p>
             @endif
         @endforelse
     </div>
