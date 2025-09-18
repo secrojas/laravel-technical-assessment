@@ -32,7 +32,7 @@ class ListActorsWithMovies extends Command
             $this->info("🎬 Actor: {$actor->name} ({$actor->birthdate})");
 
             foreach ($actor->movies as $movie) {
-                $this->line("   - {$movie->title} ({$movie->year})");
+                $this->line("   - {$movie->title} ({$movie->release_date})");
             }
 
             $this->newLine();

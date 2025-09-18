@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Actor;
+use App\Services\ActorService;
 use Livewire\WithPagination;
 use Livewire\Component;
 
@@ -12,18 +12,21 @@ class Actors extends Component
 
     public $search = '';
 
+    protected ActorService $actorService;
+
+    public function boot(ActorService $actorService)
+    {
+        $this->actorService = $actorService;
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function render()
-    {
-        $actors = Actor::with('movies')
-            ->when($this->search, function ($query) {
-                $query->where('name', 'like', "%{$this->search}%");
-            })
-            ->paginate(9);
+    public function render(ActorService $actorService)
+    {;
+        $actors = $this->actorService->listActorsWithMovies(9, $this->search);
 
         return view('livewire.settings.actors', compact('actors'));
     }

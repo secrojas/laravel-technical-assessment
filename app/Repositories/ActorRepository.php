@@ -3,9 +3,20 @@
 namespace App\Repositories;
 
 use App\Models\Actor;
+use App\Repositories\Contracts\ActorRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class ActorRepository
+class ActorRepository implements ActorRepositoryInterface
 {
+    public function getAllWithMoviesPaginated(int $perPage = 9, ?string $search = null): LengthAwarePaginator
+    {
+        return Actor::with('movies')
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->paginate($perPage);
+    }
+
     public function saveFromSwapi(array $data): Actor
     {
         return Actor::updateOrCreate(
