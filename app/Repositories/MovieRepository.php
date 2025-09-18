@@ -20,4 +20,24 @@ class MovieRepository
             ]
         );
     }
+
+    public function saveFromSwapi(array $filmData): Movie
+    {
+        return Movie::updateOrCreate(
+            ['url' => $filmData['url']],
+            [
+                'title'         => $filmData['title'] ?? 'Unknown',
+                'episode_id'    => $filmData['episode_id'] ?? null,
+                'opening_crawl' => $filmData['opening_crawl'] ?? null,
+                'director'      => $filmData['director'] ?? null,
+                'producer'      => $filmData['producer'] ?? null,
+                'release_date'  => $filmData['release_date'] ?? null,
+            ]
+        );
+    }
+
+    public function searchByTitle(string $title)
+    {
+        return Movie::where('title', 'like', "%{$title}%")->get();
+    }
 }

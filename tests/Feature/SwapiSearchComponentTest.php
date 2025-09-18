@@ -21,20 +21,25 @@ class SwapiSearchComponentTest extends TestCase
             "{$baseUrl}/people*" => Http::response([
                 'results' => [
                     [
-                        'name' => 'Luke Skywalker',
+                        'name'       => 'Luke Skywalker',
                         'birth_year' => '19 BBY',
-                        'gender' => 'Male',
-                        'height' => '172',
-                        'mass' => '77',
-                        'films' => ["{$baseUrl}/films/1/"],
-                        'url' => "{$baseUrl}/people/1/",
+                        'gender'     => 'Male',
+                        'height'     => '172',
+                        'mass'       => '77',
+                        'films'      => ["{$baseUrl}/films/1/"],
+                        'url'        => "{$baseUrl}/people/1/",
                     ],
                 ],
             ], 200),
 
             "{$baseUrl}/films/1/" => Http::response([
-                'title' => 'A New Hope',
-                'release_date' => '1977-05-25',
+                'title'         => 'A New Hope',
+                'episode_id'    => 4,
+                'opening_crawl' => 'It is a period of civil war...',
+                'director'      => 'George Lucas',
+                'producer'      => 'Gary Kurtz, Rick McCallum',
+                'release_date'  => '1977-05-25',
+                'url'           => "{$baseUrl}/films/1/",
             ], 200),
         ]);
 
@@ -43,7 +48,10 @@ class SwapiSearchComponentTest extends TestCase
             ->call('search')
             ->assertSee('Luke Skywalker')
             ->assertSee('A New Hope')
-            ->assertSee('1977');
+            ->assertSee('Episode 4')
+            ->assertSee('George Lucas')
+            ->assertSee('Gary Kurtz, Rick McCallum')
+            ->assertSee('1977'); // año parseado desde release_date
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -59,5 +67,48 @@ class SwapiSearchComponentTest extends TestCase
             ->set('query', 'Unknown Character')
             ->call('search')
             ->assertSee('No results found.');
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_handles_api_failure_gracefully()
+    {
+        $baseUrl = config('swapi.base_url');
+
+        Http::fake([
+            "{$baseUrl}/people*" => Http::response([], 500),
+        ]);
+
+        Livewire::test(SwapiSearch::class)
+            ->set('query', 'Luke')
+            ->call('search')
+            ->assertSee('No results found.');
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_handles_character_without_films()
+    {
+        $baseUrl = config('swapi.base_url');
+
+        Http::fake([
+            "{$baseUrl}/people*" => Http::response([
+                'results' => [
+                    [
+                        'name'       => 'Han Solo',
+                        'birth_year' => '29 BBY',
+                        'gender'     => 'Male',
+                        'height'     => '180',
+                        'mass'       => '80',
+                        'films'      => [], // sin films
+                        'url'        => "{$baseUrl}/people/14/",
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        Livewire::test(SwapiSearch::class)
+            ->set('query', 'Han')
+            ->call('search')
+            ->assertSee('Han Solo')
+            ->assertDontSee('Films:');
     }
 }
