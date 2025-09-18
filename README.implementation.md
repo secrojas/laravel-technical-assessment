@@ -37,10 +37,10 @@ This project demonstrates how to manage a catalog of actors and movies combined 
 
 ## 🚀 Usage Flow
 
-1-Browse existing Actors & Movies (seeded data).
-2-Use the search box to filter actors by name.
-3-Go to Star Wars Search, type a character’s name, and view results directly from SWAPI.
-4-The character and their films are stored in the DB and will now appear in the Actors & Movies list.
+1. Browse existing Actors & Movies (seeded data).
+2. Use the search box to filter actors by name.
+3. Go to Star Wars Search, type a character’s name, and view results directly from SWAPI.
+4. The character and their films are stored in the DB and will now appear in the Actors & Movies list.
 
 
 ## 🔑 Environment Variables
