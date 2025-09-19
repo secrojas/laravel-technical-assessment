@@ -61,15 +61,15 @@ class SwapiSearchComponentUnitTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_empty_results_when_query_is_empty(): void
     {
-        $mockService = \Mockery::mock(\App\Services\SwapiService::class);
-        $this->app->instance(\App\Services\SwapiService::class, $mockService);
+        $mockService = Mockery::mock(SwapiService::class);
+        $this->app->instance(SwapiService::class, $mockService);
 
         $mockService->shouldReceive('searchPeople')
             ->once()
             ->with('')
             ->andReturn([]);
 
-        Livewire::test(\App\Livewire\SwapiSearch::class)
+        Livewire::test(SwapiSearch::class)
             ->set('query', '')
             ->call('search')
             ->assertDontSee('No results found.')

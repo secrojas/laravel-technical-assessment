@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Services;
 
+use App\Models\Actor;
+use App\Models\Movie;
 use App\Repositories\ActorRepository;
 use App\Repositories\MovieRepository;
 use App\Services\SwapiService;
@@ -76,8 +78,8 @@ class SwapiServiceTest extends TestCase
             'url'         => "{$baseUrl}/films/1/",
         ]);
 
-        $actorId = \App\Models\Actor::where('name', 'Luke Skywalker')->first()->id;
-        $movieId = \App\Models\Movie::where('title', 'A New Hope')->first()->id;
+        $actorId = Actor::where('name', 'Luke Skywalker')->first()->id;
+        $movieId = Movie::where('title', 'A New Hope')->first()->id;
 
         $this->assertDatabaseHas('actor_movie', [
             'actor_id' => $actorId,
@@ -98,7 +100,7 @@ class SwapiServiceTest extends TestCase
                         'gender'     => 'Male',
                         'height'     => '180',
                         'mass'       => '80',
-                        'films'      => [], // sin films
+                        'films'      => [],
                         'url'        => "{$baseUrl}/people/14/",
                     ],
                 ],

@@ -8,6 +8,13 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ActorRepository implements ActorRepositoryInterface
 {
+    /**
+     * Get all actors with their associated movies, paginated.
+     *
+     * @param int
+     * @param string|null
+     * @return LengthAwarePaginator
+     */
     public function getAllWithMoviesPaginated(int $perPage = 9, ?string $search = null): LengthAwarePaginator
     {
         return Actor::with('movies')
@@ -17,6 +24,12 @@ class ActorRepository implements ActorRepositoryInterface
             ->paginate($perPage);
     }
 
+    /**
+     * Search actors by name.
+     *
+     * @param string $name
+     * @return \Illuminate\Support\Collection
+     */
     public function saveFromSwapi(array $data): Actor
     {
         return Actor::updateOrCreate(

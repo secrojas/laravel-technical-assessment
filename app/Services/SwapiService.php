@@ -12,6 +12,8 @@ use Exception;
 
 class SwapiService implements SwapiServiceInterface
 {
+    private const CACHE_TTL_PEOPLE_FILM = 604800;
+
     public function __construct(
         private ActorRepository $actorRepo,
         private MovieRepository $movieRepo
@@ -40,7 +42,7 @@ class SwapiService implements SwapiServiceInterface
     {
         $cacheKey = 'swapi-search-' . strtolower(trim($query));
 
-        return Cache::remember($cacheKey, 3600, function () use ($query) {
+        return Cache::remember($cacheKey, self::CACHE_TTL_PEOPLE_FILM, function () use ($query) {
             $response = Http::get(config('swapi.base_url') . '/people', [
                 'search' => $query,
             ]);
@@ -85,7 +87,7 @@ class SwapiService implements SwapiServiceInterface
     {
         $filmKey = 'swapi-film-' . md5(strtolower(trim($filmUrl)));
 
-        return Cache::remember($filmKey, 86400, function () use ($filmUrl) {
+        return Cache::remember($filmKey, self::CACHE_TTL_PEOPLE_FILM, function () use ($filmUrl) {
             $response = Http::get($filmUrl);
 
             if ($response->failed()) {

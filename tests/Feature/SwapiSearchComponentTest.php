@@ -48,10 +48,10 @@ class SwapiSearchComponentTest extends TestCase
             ->call('search')
             ->assertSee('Luke Skywalker')
             ->assertSee('A New Hope')
-            ->assertSee('Episode 4')
+            ->assertSee('Ep 4')
             ->assertSee('George Lucas')
             ->assertSee('Gary Kurtz, Rick McCallum')
-            ->assertSee('1977'); // año parseado desde release_date
+            ->assertSee('1977');
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -98,7 +98,7 @@ class SwapiSearchComponentTest extends TestCase
                         'gender'     => 'Male',
                         'height'     => '180',
                         'mass'       => '80',
-                        'films'      => [], // sin films
+                        'films'      => [],
                         'url'        => "{$baseUrl}/people/14/",
                     ],
                 ],

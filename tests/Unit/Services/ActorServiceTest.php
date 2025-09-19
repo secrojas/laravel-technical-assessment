@@ -36,7 +36,6 @@ class ActorServiceTest extends TestCase
 
         $service = new ActorService(new ActorRepository());
 
-        // ✅ Primer parámetro perPage, segundo parámetro search
         $results = $service->listActorsWithMovies(9, 'Leonardo');
 
         $this->assertEquals(1, $results->total());
@@ -49,7 +48,6 @@ class ActorServiceTest extends TestCase
 
         $service = new ActorService(new ActorRepository());
 
-        // ✅ Primer parámetro es perPage, segundo (opcional) search
         $results = $service->listActorsWithMovies(10);
 
         $this->assertEquals(10, $results->perPage());

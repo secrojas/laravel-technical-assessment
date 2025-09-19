@@ -1,5 +1,5 @@
 <div>
-    {{-- 🔍 Search --}}
+    
     <div class="relative mb-6 flex">
         <input 
             type="text" 
@@ -22,7 +22,6 @@
         </button>
     </div>
 
-    {{-- ⏳ Loading Spinner --}}
     <div wire:loading wire:target="search" 
         class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
         <div class="flex flex-col items-center space-y-3">
@@ -34,14 +33,13 @@
         </div>
     </div>
 
-    {{-- 📋 Results --}}
     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($results as $person)
             <div class="p-6 border rounded-xl shadow-md hover:shadow-lg bg-white dark:bg-zinc-800 transition space-y-2">
-                {{-- Name --}}
+                
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white">{{ $person['name'] }}</h2>
 
-                {{-- Details --}}
+                
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     <strong>Birth Year:</strong> {{ $person['birth_year'] ?? 'Unknown' }}
                 </p>
@@ -54,8 +52,7 @@
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     <strong>Mass:</strong> {{ $person['mass'] ?? 'Unknown' }} kg
                 </p>
-
-                {{-- Films --}}
+                
                 @if(!empty($person['films_details']))
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-3">Films</h4>
                     <div class="flex flex-col gap-2">
