@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Actors;
+use App\Livewire\SwapiSearch;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -12,6 +14,10 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/actors', Actors::class)->name('actors');
+    Route::get('/swapi', SwapiSearch::class)->name('swapi');
+
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');

@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\ActorRepository;
+use App\Repositories\Contracts\ActorRepositoryInterface;
+use App\Services\Contracts\SwapiServiceInterface;
+use App\Services\SwapiService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(SwapiServiceInterface::class, SwapiService::class);
+        $this->app->bind(ActorRepositoryInterface::class, ActorRepository::class);
     }
 
     /**

@@ -52,3 +52,7 @@ The application should:
 -   Build some test cases which mock the SW-API and confirm the search and display works there as intended
 
 You should use [Laravel Livewire](https://livewire.laravel.com/) for your views and actions.
+
+## Implementation Notes
+
+For details about what was applied and implemented in this solution (architecture decisions, environment variables, testing notes, etc.), see the [Implementation README](README.implementation.md).

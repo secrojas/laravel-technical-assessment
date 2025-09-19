@@ -13,7 +13,17 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
+
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="film" :href="route('actors')" :current="request()->routeIs('actors')" wire:navigate>
+                        {{ __('Actors & Movies') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="sparkles" :href="route('swapi')" :current="request()->routeIs('swapi')" wire:navigate>
+                        Star Wars Search
+                    </flux:navlist.item>
+
                 </flux:navlist.group>
             </flux:navlist>
 
