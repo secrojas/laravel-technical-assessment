@@ -17,7 +17,8 @@ class SwapiService implements SwapiServiceInterface
     public function __construct(
         private ActorRepository $actorRepo,
         private MovieRepository $movieRepo
-    ) {}
+    ) {
+    }
 
     public function searchPeople(string $query): array
     {
@@ -60,42 +61,74 @@ class SwapiService implements SwapiServiceInterface
         $actor = $this->actorRepo->saveFromSwapi($person);
 
         if (!empty($person['films'])) {
-            $person['films_details'] = collect($person['films'])->map(function ($filmUrl) use ($actor) {
-                $filmData = $this->fetchFilm($filmUrl);
+            $person['films_details'] = $this->fetchFilmsInParallel($person['films'], $actor->id);
+        }
 
-                if (!$filmData) {
-                    return ['title' => 'Unknown'];
+        return $person;
+    }
+
+    /**
+     * Fetch multiple films in parallel using Http::pool()
+     */
+    private function fetchFilmsInParallel(array $filmUrls, int $actorId): array
+    {
+        $toFetch = [];
+        $cached = [];
+
+        // Check cache first
+        foreach ($filmUrls as $url) {
+            $filmKey = $this->filmCacheKey($url);
+            if (Cache::has($filmKey)) {
+                $cached[$url] = Cache::get($filmKey);
+            } else {
+                $toFetch[$url] = $url;
+            }
+        }
+
+        // Fetch missing films in parallel
+        $responses = [];
+        if (!empty($toFetch)) {
+            $responses = Http::pool(function ($pool) use ($toFetch) {
+                foreach ($toFetch as $url) {
+                    $pool->as($url)->get($url);
+                }
+            });
+        }
+
+        $films = [];
+        foreach ($filmUrls as $url) {
+            $filmData = $cached[$url] ?? null;
+
+            if (!$filmData && isset($responses[$url])) {
+                $response = $responses[$url];
+                if ($response->failed()) {
+                    Log::warning("Failed to fetch film from SWAPI: $url");
+                    continue;
                 }
 
-                $movie = $this->movieRepo->saveFromSwapi($filmData);
-                $movie->actors()->syncWithoutDetaching([$actor->id]);
+                $filmData = $response->json();
+                Cache::put($this->filmCacheKey($url), $filmData, self::CACHE_TTL_PEOPLE_FILM);
+            }
 
-                return [
+            if ($filmData) {
+                $movie = $this->movieRepo->saveFromSwapi($filmData);
+                $movie->actors()->syncWithoutDetaching([$actorId]);
+
+                $films[] = [
                     'title'        => $filmData['title'] ?? 'Unknown',
                     'episode_id'   => $filmData['episode_id'] ?? null,
                     'release_date' => $filmData['release_date'] ?? null,
                     'director'     => $filmData['director'] ?? null,
                     'producer'     => $filmData['producer'] ?? null,
                 ];
-            })->all();
+            }
         }
 
-        return $person;
+        return $films;
     }
 
-    private function fetchFilm(string $filmUrl): ?array
+    private function filmCacheKey(string $url): string
     {
-        $filmKey = 'swapi-film-' . md5(strtolower(trim($filmUrl)));
-
-        return Cache::remember($filmKey, self::CACHE_TTL_PEOPLE_FILM, function () use ($filmUrl) {
-            $response = Http::get($filmUrl);
-
-            if ($response->failed()) {
-                Log::warning("Failed to fetch film from SWAPI: $filmUrl");
-                return null;
-            }
-
-            return $response->json();
-        });
+        return 'swapi-film-' . md5(strtolower(trim($url)));
     }
 }

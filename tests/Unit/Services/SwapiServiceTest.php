@@ -154,4 +154,76 @@ class SwapiServiceTest extends TestCase
         $this->assertNotEmpty($resultsSecond);
         $this->assertEquals('Leia Organa', $resultsSecond[0]['name']);
     }
+
+    public function test_search_people_fetches_multiple_films_in_parallel()
+    {
+        $baseUrl = config('swapi.base_url');
+
+        Http::fake([
+            "{$baseUrl}/people*" => Http::response([
+                'results' => [
+                    [
+                        'name'       => 'Obi-Wan Kenobi',
+                        'birth_year' => '57 BBY',
+                        'gender'     => 'Male',
+                        'height'     => '182',
+                        'mass'       => '77',
+                        'films'      => [
+                            "{$baseUrl}/films/1/",
+                            "{$baseUrl}/films/2/",
+                        ],
+                        'url'        => "{$baseUrl}/people/10/",
+                    ],
+                ],
+            ], 200),
+
+            "{$baseUrl}/films/1/" => Http::response([
+                'title'        => 'The Phantom Menace',
+                'episode_id'   => 1,
+                'director'     => 'George Lucas',
+                'producer'     => 'Rick McCallum',
+                'release_date' => '1999-05-19',
+                'url'          => "{$baseUrl}/films/1/",
+            ], 200),
+
+            "{$baseUrl}/films/2/" => Http::response([
+                'title'        => 'Attack of the Clones',
+                'episode_id'   => 2,
+                'director'     => 'George Lucas',
+                'producer'     => 'Rick McCallum',
+                'release_date' => '2002-05-16',
+                'url'          => "{$baseUrl}/films/2/",
+            ], 200),
+        ]);
+
+        Cache::flush();
+
+        $service = new SwapiService(
+            new ActorRepository(),
+            new MovieRepository()
+        );
+
+        $results = $service->searchPeople('Obi-Wan');
+
+        $this->assertNotEmpty($results);
+        $this->assertEquals('Obi-Wan Kenobi', $results[0]['name']);
+        $this->assertCount(2, $results[0]['films_details']);
+
+        $this->assertDatabaseHas('actors', ['name' => 'Obi-Wan Kenobi']);
+        $this->assertDatabaseHas('movies', ['title' => 'The Phantom Menace']);
+        $this->assertDatabaseHas('movies', ['title' => 'Attack of the Clones']);
+
+        $actorId = Actor::where('name', 'Obi-Wan Kenobi')->first()->id;
+        $movieIds = Movie::whereIn('title', [
+            'The Phantom Menace',
+            'Attack of the Clones'
+        ])->pluck('id');
+
+        foreach ($movieIds as $movieId) {
+            $this->assertDatabaseHas('actor_movie', [
+                'actor_id' => $actorId,
+                'movie_id' => $movieId,
+            ]);
+        }
+    }
 }
